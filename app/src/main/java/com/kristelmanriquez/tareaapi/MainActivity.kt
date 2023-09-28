@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dummyjson.com/products/")
+            .baseUrl("https://dummyjson.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -25,22 +25,13 @@ class MainActivity : AppCompatActivity() {
         // Hacer la llamada a la API
         val call = apiService.getProducts()
 
-        call.enqueue(object : Callback<List<ProductClass>> {
-            override fun onResponse(call: Call<List<ProductClass>>, response: Response<List<ProductClass>>) {
+        call.enqueue(object : Callback<ProductData> {
+            override fun onResponse(call: Call<ProductData>, response: Response<ProductData>) {
                 if (response.isSuccessful) {
-                    val products = response.body()
-                    if (products != null) {
-                        for (product in products) {
-                            // Aquí puedes acceder a cada producto individualmente
-                            // Por ejemplo, puedes imprimir el nombre y el precio de cada producto
-                            Log.i("Información", "Id: ${product.id}")
-                            Log.i("Información", "Título: ${product.title}")
-                            Log.i("Información", "Marca: ${product.brand}")
-                        }
-                    } else {
-                        Log.e("ErrorDelPrograma", "La respuesta es null")
+                    val productData = response.body()
+                    if (productData != null) {
+                        Log.i("Éxito en la consulta de la API", "Id: ${productData.products}")
                     }
-
                 } else {
                     // Manejar errores en la respuesta
                     Log.e("Error de respuesta", "Error en la respuesta de la API")
@@ -48,10 +39,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<List<ProductClass>>, t: Throwable) {
+            override fun onFailure(call: Call<ProductData>, t: Throwable) {
                 //Manejar errores de conexión
                 Log.e("Error de conexión", "Error en la llamada")
             }
+
         })
     }
 }
